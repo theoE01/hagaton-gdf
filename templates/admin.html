@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+</head>
+<body>
+    <h2>Painel Administrativo</h2>
+
+    <form method="GET">
+        <select name="categoria">
+            <option value="">Todos</option>
+            <option value="public">Públicos</option>
+            <option value="anon">Anônimos</option>
+        </select>
+
+        <select name="tipo">
+            <option value="">Todos</option>
+            <option value="imagem">Imagens</option>
+            <option value="audio">Áudios</option>
+            <option value="video">Vídeos</option>
+            <option value="texto">Textos</option>
+        </select>
+
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <table border="1">
+        <tr>
+            <th>Protocolo</th>
+            <th>Tipo</th>
+            <th>Preview</th>
+            <th>Download</th>
+        </tr>
+
+        {% for file in files %}
+        <tr>
+            <td>{{ file.submission.user.protocolo }}</td>
+            <td>{{ file.file_type }}</td>
+            <td>
+                {% if file.file_type == 'imagem' %}
+                    <img src="/{{ file.file_path }}" width="100">
+                {% elif file.file_type == 'audio' %}
+                    <audio controls src="/{{ file.file_path }}"></audio>
+                {% elif file.file_type == 'video' %}
+                    <video width="150" controls src="/{{ file.file_path }}"></video>
+                {% else %}
+                    Texto
+                {% endif %}
+            </td>
+            <td>
+                <a href="/{{ file.file_path }}" download>Download</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
