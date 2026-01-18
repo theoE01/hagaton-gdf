@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Protocolo (Admin) | Participa DF</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    :root{
+      --gdf-blue:#003A8F;
+      --gdf-green:#0B7D3E;
+
+      --bg:#f2f4f8;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#4b5563;
+      --line:rgba(31,41,55,.12);
+      --shadow:0 10px 30px rgba(0,0,0,.10);
+
+      --radius:12px;
+
+      --ok-bg:rgba(11,125,62,.10);
+      --ok-line:rgba(11,125,62,.28);
+
+      --blue-bg:rgba(0,58,143,.08);
+      --blue-line:rgba(0,58,143,.22);
+
+      --danger-bg: rgba(220,38,38,.08);
+      --danger-line: rgba(220,38,38,.18);
+    }
+
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header{
+      background: linear-gradient(90deg, var(--gdf-blue), var(--gdf-green));
+      color:#fff;
+      padding: 20px 18px;
+    }
+
+    .topbar{
+      max-width: 1100px;
+      margin: 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .topbar h1{
+      font-size: 18px;
+      margin:0;
+    }
+    .topbar p{
+      margin: 6px 0 0;
+      font-size: 13px;
+      opacity:.95;
+      line-height: 1.35;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      text-decoration:none;
+      font-weight: 900;
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,.25);
+      color:#fff;
+      background: rgba(255,255,255,.12);
+      transition: opacity .15s, transform .05s;
+    }
+    .btn:hover{opacity:.95}
+    .btn:active{transform: translateY(1px)}
+    .btn:focus{outline:none; box-shadow: 0 0 0 4px rgba(255,255,255,.18);}
+
+    main{
+      max-width: 1100px;
+      margin: 26px auto;
+      padding: 0 16px 26px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .card{
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .head{
+      padding: 16px 16px 14px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .head h2{
+      font-size: 16px;
+      margin:0;
+      color: var(--gdf-blue);
+    }
+
+    .sub{
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .pills{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #f9fafb;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .pill strong{ color: var(--text); }
+
+    .pill.ok{
+      border-color: var(--ok-line);
+      background: var(--ok-bg);
+      color: var(--gdf-green);
+    }
+    .pill.blue{
+      border-color: var(--blue-line);
+      background: var(--blue-bg);
+      color: var(--gdf-blue);
+    }
+
+    .content{
+      padding: 16px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 780px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .box{
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 12px;
+      background: #f9fafb;
+    }
+
+    .k{
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      color: var(--muted);
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .v{
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .muted{ color: var(--muted); font-weight: 700; }
+
+    .submissions{
+      display:flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .submission{
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow:hidden;
+      background: #fff;
+    }
+
+    .submission-head{
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      background: #f9fafb;
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .submission-head .left{
+      display:flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 240px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      font-weight: 900;
+      font-size: 12px;
+      white-space: nowrap;
+      width: fit-content;
+    }
+
+    .tag.ok{ border-color: var(--ok-line); background: var(--ok-bg); color: var(--gdf-green); }
+    .tag.blue{ border-color: var(--blue-line); background: var(--blue-bg); color: var(--gdf-blue); }
+    .tag.danger{ border-color: var(--danger-line); background: var(--danger-bg); color: #b91c1c; }
+
+    .submission-body{
+      padding: 12px;
+    }
+
+    .text-block{
+      border: 1px solid var(--line);
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td{
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align:left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+    th{
+      background: #f9fafb;
+      color: var(--muted);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      font-size: 12px;
+    }
+
+    .link{
+      color: var(--gdf-blue);
+      text-decoration:none;
+      font-weight: 900;
+    }
+    .link:hover{ text-decoration: underline; }
+
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+    }
+
+    .note{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .empty{
+      padding: 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .preview-wrap{
+  display:flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.preview-thumb{
+  width: 92px;
+  height: 72px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: #f9fafb;
+  object-fit: cover;
+  display:block;
+}
+
+.preview-meta{
+  display:flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preview-actions{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.preview-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: #fff;
+  color: var(--gdf-blue);
+  font-weight: 900;
+  font-size: 12px;
+  text-decoration:none;
+}
+
+.preview-btn:hover{
+  text-decoration: underline;
+}
+
+.preview-player{
+  width: 260px;
+  max-width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: #f9fafb;
+}
+
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div>
+      <h1>Detalhamento do Protocolo (Admin)</h1>
+      <p>Visualização de submissões e anexos com metadados para auditoria e rastreabilidade.</p>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="btn" href="{{ url_for('admin.dashboard') }}">Voltar ao painel</a>
+      <a class="btn" href="{{ url_for('admin.logout') }}">Sair</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- DADOS DO USUÁRIO/PROTOCOLO -->
+  <section class="card" aria-label="Resumo do protocolo">
+    <div class="head">
+      <div>
+        <h2>Resumo do protocolo</h2>
+        <div class="sub">Protocolo, modo de envio e identificação (se disponível).</div>
+      </div>
+
+      <div class="pills">
+        <div class="pill blue">Protocolo: <strong>{{ user.protocolo }}</strong></div>
+        {% if user.is_public %}
+          <div class="pill ok">Envio: <strong>Identificado</strong></div>
+        {% else %}
+          <div class="pill blue">Envio: <strong>Anônimo</strong></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="grid">
+        <div class="box">
+          <div class="k">Criado em</div>
+          <div class="v">{{ user.created_at or '—' }}</div>
+        </div>
+
+        <div class="box">
+          <div class="k">Contato / Identificação</div>
+          {% if user.is_public %}
+            <div class="v">{{ user.nome or '—' }}</div>
+            <div class="muted">{{ user.email or '—' }} • {{ user.telefone or '—' }}</div>
+          {% else %}
+            <div class="v">Não informado (envio anônimo)</div>
+            <div class="muted">Somente o protocolo é armazenado para rastreabilidade.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="note">
+        Recomendação de auditoria: downloads devem ser registrados com data/hora, protocolo, arquivo e usuário administrador.
+      </div>
+    </div>
+  </section>
+
+  <!-- SUBMISSÕES -->
+  <section class="card" aria-label="Submissões do protocolo">
+    <div class="head">
+      <div>
+        <h2>Submissões e anexos</h2>
+        <div class="sub">Cada submissão contém tipo (texto/imagem/áudio/vídeo), descrição (se informada) e anexos com hash.</div>
+      </div>
+
+      <div class="pills">
+        <div class="pill">Total de submissões: <strong>{{ submissions|length }}</strong></div>
+      </div>
+    </div>
+
+    <div class="content">
+      {% if submissions and submissions|length > 0 %}
+        <div class="submissions">
+          {% for s in submissions %}
+            <article class="submission" aria-label="Submissão {{ s.id }}">
+              <div class="submission-head">
+                <div class="left">
+                  {% if s.tipo == 'texto' %}
+                    <span class="tag blue">Tipo: TEXTO</span>
+                  {% elif s.tipo == 'imagem' %}
+                    <span class="tag ok">Tipo: IMAGEM</span>
+                  {% elif s.tipo == 'audio' %}
+                    <span class="tag ok">Tipo: ÁUDIO</span>
+                  {% elif s.tipo == 'video' %}
+                    <span class="tag ok">Tipo: VÍDEO</span>
+                  {% else %}
+                    <span class="tag danger">Tipo: {{ s.tipo }}</span>
+                  {% endif %}
+
+                  <div class="muted">Criado em: {{ s.created_at or '—' }}</div>
+                </div>
+
+                <div class="pills">
+                  <div class="pill">ID: <strong>{{ s.id }}</strong></div>
+                  <div class="pill">Status: <strong>{{ s.status or 'recebido' }}</strong></div>
+                  <div class="pill">Anexos: <strong>{{ s.files|length }}</strong></div>
+                </div>
+              </div>
+
+              <div class="submission-body">
+                {% if s.texto %}
+                  <div class="k" style="margin-bottom:6px;">Descrição</div>
+                  <div class="text-block">{{ s.texto }}</div>
+                {% else %}
+                  <div class="muted">Sem descrição informada.</div>
+                {% endif %}
+
+                {% if s.files and s.files|length > 0 %}
+                  <table aria-label="Tabela de anexos">
+                    <thead>
+                      <tr>
+                        <th>Arquivo</th>
+                        <th>Tipo</th>
+                        <th>Tamanho</th>
+                        <th>SHA-256</th>
+                        <th>Enviado em</th>
+                        <th>Ação</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for f in s.files %}
+                        <tr>
+                          <td>
+                            <div><strong>{{ f.original_name or 'arquivo' }}</strong></div>
+                            <div class="muted mono">{{ f.file_path }}</div>
+                          </td>
+                          <td class="nowrap">{{ f.mime_type or f.file_type or '—' }}</td>
+                          <td>
+  {% set public_url = '/' ~ (f.file_path | replace('\\', '/')) %}
+
+  <div class="preview-wrap">
+    <!-- Prévia: imagem -->
+    {% if (f.mime_type or '')[:6] == 'image/' %}
+      <a href="{{ public_url }}" target="_blank" rel="noopener" title="Abrir imagem">
+        <img class="preview-thumb" src="{{ public_url }}" alt="Prévia de {{ f.original_name or 'imagem' }}">
+      </a>
+
+    <!-- Prévia: áudio -->
+    {% elif (f.mime_type or '')[:6] == 'audio/' %}
+      <audio class="preview-player" controls preload="metadata">
+        <source src="{{ public_url }}" type="{{ f.mime_type }}">
+        Seu navegador não suporta áudio.
+      </audio>
+
+    <!-- Prévia: vídeo -->
+    {% elif (f.mime_type or '')[:6] == 'video/' %}
+      <video class="preview-player" controls preload="metadata">
+        <source src="{{ public_url }}" type="{{ f.mime_type }}">
+        Seu navegador não suporta vídeo.
+      </video>
+
+    <!-- Sem prévia -->
+    {% else %}
+      <div class="muted">Sem prévia</div>
+    {% endif %}
+
+    <div class="preview-meta">
+      <div><strong>{{ f.original_name or 'arquivo' }}</strong></div>
+      <div class="muted mono">{{ f.file_path }}</div>
+
+      <div class="preview-actions">
+        <a class="preview-btn" href="{{ public_url }}" target="_blank" rel="noopener">Abrir</a>
+        <a class="preview-btn" href="{{ url_for('admin.download_file', file_id=f.id) }}">Baixar</a>
+      </div>
+    </div>
+  </div>
+</td>
+
+                          <td class="mono">{{ f.sha256 or '—' }}</td>
+                          <td class="nowrap muted">{{ f.uploaded_at or '—' }}</td>
+                          <td class="nowrap">
+                            <!-- DOWNLOAD PROTEGIDO (requer rota admin.download_file) -->
+                            <a class="link" href="{{ url_for('admin.download_file', file_id=f.id) }}">Baixar</a>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+                  <div class="note">
+                    Integridade: o hash SHA-256 permite verificar se o arquivo não foi alterado após o envio.
+                  </div>
+                {% else %}
+                  <div class="note">Nenhum anexo nesta submissão.</div>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty">Ainda não há submissões para este protocolo.</div>
+      {% endif %}
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>

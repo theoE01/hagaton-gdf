@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Análises da Capivarinha • Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --gdf-blue:#003A8F;
+      --gdf-green:#0B7D3E;
+      --bg:#f2f4f8;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#4b5563;
+      --line:rgba(31,41,55,.12);
+      --shadow:0 10px 30px rgba(0,0,0,.10);
+      --radius:14px;
+      --font: Arial, Helvetica, sans-serif;
+    }
+    body{font-family:var(--font);background:var(--bg);color:var(--text);}
+    header{
+      background: linear-gradient(90deg,var(--gdf-blue),var(--gdf-green));
+      color:#fff; padding: 18px 16px;
+    }
+    .topbar{
+      max-width: 1200px; margin:0 auto;
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 10px 12px; border-radius: 10px;
+      text-decoration:none; font-weight:900; font-size:13px;
+      border: 1px solid rgba(255,255,255,.25);
+      color:#fff; background: rgba(255,255,255,.12);
+    }
+    main{max-width: 1200px; margin: 18px auto; padding: 0 16px 24px;}
+    .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap: 14px;}
+    .card{
+      background:var(--card); border:1px solid var(--line);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card-head{padding: 14px 14px 12px; border-bottom:1px solid var(--line);}
+    .card-head h2{font-size:15px; color: var(--gdf-blue);}
+    .sub{margin-top:6px; font-size:13px; color: var(--muted); line-height:1.35;}
+
+    /* Chat */
+    .chat-body{padding: 12px; height: 60vh; overflow:auto; display:flex; flex-direction:column; gap:10px; background:#f9fafb;}
+    .bubble{
+      max-width: 92%; padding: 10px 12px; border-radius: 14px;
+      border:1px solid rgba(31,41,55,.10); background:#fff;
+      font-size:13px; line-height:1.35; white-space:pre-wrap; word-break:break-word;
+    }
+    .bubble.user{margin-left:auto; background: rgba(11,125,62,.10); border-color: rgba(11,125,62,.25);}
+    .bubble.bot{margin-right:auto;}
+    .composer{padding: 10px; border-top:1px solid var(--line); display:flex; gap:10px; align-items:center; background:#fff;}
+    textarea{
+      flex:1; height: 44px; resize:none; border-radius: 12px;
+      border:1px solid rgba(31,41,55,.16); padding:10px;
+      outline:none; font-size:13px;
+    }
+    button{
+      width: 110px; height: 44px; border-radius: 12px; border:none;
+      background: var(--gdf-green); color:#fff; font-weight:900; cursor:pointer;
+    }
+    .meta{
+      padding: 10px 12px;
+      border-top: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      background:#fff;
+    }
+
+    /* Mascote simples */
+    .mascot{
+      position: sticky; top: 12px;
+      display:flex; align-items:center; gap: 12px;
+    }
+    .capi{
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background-image: url("{{ url_for('static', filename='icons/capivara.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        box-shadow: 0 10px 25px rgba(0,0,0,.18);
+        border: 1px solid rgba(31,41,55,.12);
+        }
+
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr;}
+      .chat-body{height: 52vh;}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div>
+      <div style="font-weight:900;">ANÁLISES DA CAPIVARINHA</div>
+      <div style="font-size:13px;opacity:.95;">Chat do administrador + gráficos sob demanda.</div>
+    </div>
+    <a class="btn" href="{{ url_for('admin.dashboard') }}">Voltar ao painel</a>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <section class="card">
+      <div class="card-head">
+        <h2>Chat do Admin</h2>
+        <div class="sub">Exemplos: “Quais os protocolos críticos?”, “Gráfico por status”, “Gráfico por tipo”, “Tendência da semana”.</div>
+      </div>
+
+      <div id="chatBody" class="chat-body"></div>
+
+      <div class="composer">
+        <textarea id="txt" placeholder="Digite sua solicitação de análise... (use a palavra 'gráfico' se quiser chart)"></textarea>
+        <button id="send" type="button">Enviar</button>
+      </div>
+
+      <div class="meta">
+        <span id="metaLeft">Pronto.</span>
+        <span id="metaRight">Somente admin logado.</span>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="card-head">
+        <div class="mascot">
+
+          <div class="capi" aria-hidden="true"></div>
+
+          <div>
+            <div class="badge">Capivarinha • IA</div>
+            <div class="sub" style="margin-top:6px;">Peça “gráfico” e eu retornarei dados para renderização.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:12px;">
+        <canvas id="chart" height="220"></canvas>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script>
+  (function(){
+    const API = '/admin/api/capivarinha/perguntar';
+
+    const chatBody = document.getElementById('chatBody');
+    const txt = document.getElementById('txt');
+    const btn = document.getElementById('send');
+    const metaLeft = document.getElementById('metaLeft');
+
+    const canvas = document.getElementById('chart');
+    const ctx = canvas ? canvas.getContext('2d') : null;
+
+    let chart = null;
+
+    function escapeHtml(s){
+      return (s || '').replace(/[&<>"']/g, m => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+      }[m]));
+    }
+
+    function bubble(who, text){
+      const div = document.createElement('div');
+      div.className = 'bubble ' + (who === 'user' ? 'user' : 'bot');
+      div.innerHTML = escapeHtml(text || '');
+      chatBody.appendChild(div);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function setMeta(text){
+      if(metaLeft) metaLeft.textContent = text || '';
+    }
+
+    function normalizeChartPayload(g){
+      // Suporta formato simples:
+      // {kind, title, labels, values}
+      // E formato avançado:
+      // {kind, title, labels, datasets:[{label,data}]}
+      if(!g || typeof g !== 'object') return null;
+
+      const kind = (g.kind || 'bar').toLowerCase();
+      const title = g.title || 'Métrica';
+
+      const labels = Array.isArray(g.labels) ? g.labels : [];
+      let datasets = [];
+
+      if(Array.isArray(g.datasets) && g.datasets.length){
+        datasets = g.datasets.map(ds => ({
+          label: ds.label || title,
+          data: Array.isArray(ds.data) ? ds.data : []
+        }));
+      } else {
+        const values = Array.isArray(g.values) ? g.values : [];
+        datasets = [{ label: title, data: values }];
+      }
+
+      return { kind, title, labels, datasets };
+    }
+
+    function renderChart(payload){
+      if(!ctx) return;
+
+      const g = normalizeChartPayload(payload);
+      if(!g) return;
+
+      // Se não tiver dado suficiente, não desenha
+      const hasAnyData = (g.labels.length > 0) && (g.datasets.some(d => (d.data || []).length > 0));
+      if(!hasAnyData) return;
+
+      if(chart) chart.destroy();
+
+      // Tipos suportados
+      let type = 'bar';
+      if(['pie','doughnut','line','bar'].includes(g.kind)) type = g.kind;
+
+      // "bar horizontal" em Chart.js v4
+      const isHorizontal = (g.kind === 'bar_horizontal');
+
+      chart = new Chart(ctx, {
+        type,
+        data: {
+          labels: g.labels,
+          datasets: g.datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: (g.datasets.length > 1) || (type === 'pie') || (type === 'doughnut')
+            },
+            title: {
+              display: true,
+              text: g.title
+            },
+            tooltip: {
+              enabled: true
+            }
+          },
+          scales: (type === 'pie' || type === 'doughnut') ? {} : {
+            x: {
+              grid: { display: true },
+              ticks: { autoSkip: true, maxRotation: 0 }
+            },
+            y: {
+              grid: { display: true },
+              beginAtZero: true
+            }
+          },
+          indexAxis: isHorizontal ? 'y' : 'x'
+        }
+      });
+    }
+
+    async function send(){
+      const p = (txt.value || '').trim();
+      if(!p) return;
+
+      bubble('user', p);
+      txt.value = '';
+      btn.disabled = true;
+      setMeta('Processando análise...');
+
+      try{
+        const resp = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pergunta: p })
+        });
+
+        const ct = (resp.headers.get('content-type') || '').toLowerCase();
+        const raw = await resp.text();
+
+        if(!ct.includes('application/json')){
+          console.error('Resposta não-JSON:', { status: resp.status, ct, raw });
+          throw new Error('Servidor retornou HTML em vez de JSON.');
+        }
+
+        const data = JSON.parse(raw);
+
+        if(!resp.ok || !data.ok){
+          throw new Error((data && data.erro) || ('HTTP ' + resp.status));
+        }
+
+        bubble('bot', data.resposta_texto || 'Análise gerada.');
+
+        // Render de gráfico (se vier)
+        if(data.grafico){
+          renderChart(data.grafico);
+        }
+
+        if(data.meta){
+          setMeta(`OK • protocolos=${data.meta.protocolos_consultados ?? '-'} • submissions=${data.meta.submissions_consultadas ?? '-'}`);
+        } else {
+          setMeta('OK.');
+        }
+
+      }catch(e){
+        bubble('bot', 'Falha ao processar: ' + (e.message || 'erro'));
+        setMeta('Falha.');
+      }finally{
+        btn.disabled = false;
+      }
+    }
+
+    btn.addEventListener('click', send);
+    txt.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' && !e.shiftKey){
+        e.preventDefault();
+        send();
+      }
+    });
+
+    // Boot
+    bubble('bot', 'Olá, admin. Peça uma análise. Se quiser gráfico, inclua a palavra “gráfico” na pergunta.');
+    setMeta('Pronto.');
+
+    // Deixa a área do gráfico com altura real
+    if(canvas){
+      canvas.parentElement.style.height = '360px';
+    }
+  })();
+</script>
+
+
+</body>
+</html>

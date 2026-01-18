@@ -1,0 +1,26 @@
+{
+  "name": "Participa DF — Governo do Distrito Federal",
+  "short_name": "Participa DF",
+  "description": "Plataforma digital de participação cidadã do Governo do Distrito Federal para envio de manifestações com texto, imagem, áudio e vídeo, com protocolo automático e acompanhamento.",
+  "start_url": "/?pwa=1",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f2f4f8",
+  "theme_color": "#003A8F",
+  "categories": ["government", "civic", "public-service"],
+  "icons": [
+    {
+      "src": "/static/icons/capivara.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/capivara.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

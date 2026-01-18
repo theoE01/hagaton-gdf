@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat Capivara</title>
+
+  <style>
+    :root{
+      --bg: #f2f4f8;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: rgba(31,41,55,.14);
+      --brand1: #003A8F;
+      --brand2: #0B7D3E;
+      --ok: #0B7D3E;
+      --warn: #b45309;
+      --err: #b91c1c;
+      --radius2: 12px;
+      --font: Arial, Helvetica, sans-serif;
+    }
+
+    *{ box-sizing: border-box; margin: 0; padding: 0; }
+    html, body{ height: 100%; }
+    body{
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .chat-app{
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header{
+      background: linear-gradient(90deg, var(--brand1), var(--brand2));
+      color: #fff;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+
+    .chat-title{
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .chat-title strong{
+      font-size: 13px;
+      letter-spacing: .2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .chat-title span{
+      font-size: 12px;
+      opacity: .95;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-actions{
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .btn{
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 12px;
+      transition: transform .05s, opacity .15s;
+      white-space: nowrap;
+    }
+    .btn:hover{ opacity: .95; }
+    .btn:active{ transform: translateY(1px); }
+
+    .chat-body{
+      flex: 1;
+      padding: 12px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bubble{
+      max-width: 92%;
+      border-radius: 14px;
+      padding: 10px 12px;
+      line-height: 1.35;
+      font-size: 13px;
+      border: 1px solid rgba(31,41,55,.10);
+      background: #fff;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .bubble.user{
+      margin-left: auto;
+      background: rgba(11,125,62,.10);
+      border-color: rgba(11,125,62,.25);
+    }
+    .bubble.bot{
+      margin-right: auto;
+      background: #fff;
+    }
+
+    .attachments{
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .att{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.95);
+      font-size: 12px;
+      text-decoration: none;
+      color: var(--brand1);
+      font-weight: 900;
+    }
+
+    .composer{
+      padding: 10px;
+      border-top: 1px solid rgba(31,41,55,.12);
+      background: #fff;
+    }
+
+    .row{
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .iconbtn{
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius2);
+      border: 1px solid rgba(31,41,55,.16);
+      background: #f9fafb;
+      cursor: pointer;
+      font-weight: 900;
+      color: var(--brand2);
+      transition: transform .05s, box-shadow .15s, background .15s, border-color .15s, color .15s;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .iconbtn:active{ transform: translateY(1px); }
+    .iconbtn:hover{ box-shadow: 0 10px 20px rgba(0,0,0,.08); }
+
+    .sendbtn{
+      background: var(--brand2);
+      border-color: rgba(11,125,62,.35);
+      color: #fff;
+    }
+
+    textarea{
+      flex: 1;
+      resize: none;
+      height: 44px;
+      border-radius: var(--radius2);
+      border: 1px solid rgba(31,41,55,.16);
+      padding: 10px 10px;
+      font-size: 13px;
+      outline: none;
+    }
+    textarea:focus{
+      border-color: rgba(11,125,62,.45);
+      box-shadow: 0 0 0 4px rgba(11,125,62,.12);
+    }
+
+    input[type="file"]{ display: none; }
+
+    .meta{
+      margin-top: 8px;
+      font-size: 12px;
+      color: #4b5563;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status.ok{ color: var(--ok); font-weight: 800; }
+    .status.warn{ color: var(--warn); font-weight: 800; }
+    .status.err{ color: var(--err); font-weight: 800; }
+
+    /* Botão de anexo com ícone (clip) */
+    .attachbtn{
+      background: #f9fafb;
+      color: var(--brand1);
+    }
+    .attachbtn:hover{
+      background: rgba(0,58,143,.08);
+    }
+    .attachbtn svg{
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .attachbtn.has-files{
+      background: rgba(11,125,62,.15);
+      color: var(--brand2);
+      border-color: rgba(11,125,62,.35);
+    }
+
+    @media (max-width: 520px){
+      .btn{ padding: 8px 8px; }
+      .chat-title span{ display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="chat-app" aria-label="Chat Capivarinha GDF">
+    <header class="chat-header">
+      <div class="chat-title">
+        <strong>Capivarinha GDF • Assistente</strong>
+        <span>Envie mensagem e anexos (imagem/áudio/vídeo).</span>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn" id="btnNew" type="button">Nova conversa</button>
+        <button class="btn" id="btnClear" type="button">Limpar</button>
+      </div>
+    </header>
+
+    <section id="chatBody" class="chat-body"></section>
+
+    <footer class="composer">
+      <div class="row">
+        <label class="iconbtn attachbtn" id="attachBtn" for="files" title="Anexar arquivos" aria-label="Anexar arquivos">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M16.5 6.5l-7.78 7.78a3 3 0 104.24 4.24l8.49-8.49a5 5 0 10-7.07-7.07L5.8 11.6"/>
+          </svg>
+        </label>
+        <input id="files" type="file" multiple />
+
+        <textarea id="text" placeholder="Digite sua mensagem..."></textarea>
+
+        <button id="btnSend" class="iconbtn sendbtn" type="button" title="Enviar">OK</button>
+      </div>
+
+      <div class="meta">
+        <span id="status" class="status">Pronto.</span>
+        <span id="filesInfo">Nenhum arquivo selecionado</span>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function(){
+      const API_ENVIAR = '/api/chat/enviar';
+      const API_HIST   = '/api/chat/historico';
+
+      const chatBody  = document.getElementById('chatBody');
+      const txt       = document.getElementById('text');
+      const files     = document.getElementById('files');
+      const attachBtn = document.getElementById('attachBtn');
+      const btnSend   = document.getElementById('btnSend');
+
+      const btnNew   = document.getElementById('btnNew');
+      const btnClear = document.getElementById('btnClear');
+
+      const statusEl  = document.getElementById('status');
+      const filesInfo = document.getElementById('filesInfo');
+
+      const STORAGE_KEY = 'capivara_conversa_id';
+
+      function getConversaId(){ return localStorage.getItem(STORAGE_KEY); }
+      function setConversaId(v){ localStorage.setItem(STORAGE_KEY, String(v)); }
+      function clearConversaId(){ localStorage.removeItem(STORAGE_KEY); }
+
+      function setStatus(msg, kind){
+        if (!statusEl) return;
+        statusEl.textContent = msg;
+        statusEl.className = 'status' + (kind ? (' ' + kind) : '');
+      }
+
+      function setFilesInfoText(msg){
+        if (!filesInfo) return;
+        filesInfo.textContent = msg;
+      }
+
+      function escapeHtml(s){
+        return (s || '').replace(/[&<>"']/g, m => ({
+          '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+        }[m]));
+      }
+
+      function pushBubble(who, text, anexos){
+        const div = document.createElement('div');
+        div.className = 'bubble ' + (who === 'user' ? 'user' : 'bot');
+        div.innerHTML = escapeHtml(text || '');
+
+        if(anexos && anexos.length){
+          const at = document.createElement('div');
+          at.className = 'attachments';
+          anexos.forEach(a => {
+            const link = document.createElement('a');
+            link.className = 'att';
+            link.href = a.url;
+            link.target = '_blank';
+            link.rel = 'noopener';
+            link.textContent = (a.tipo || 'anexo').toUpperCase();
+            at.appendChild(link);
+          });
+          div.appendChild(at);
+        }
+
+        chatBody.appendChild(div);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      function boot(){
+        pushBubble('bot', 'Olá. Eu sou a Capivarinha GDF. Como posso ajudar?');
+        if (txt) txt.focus();
+      }
+
+      async function parseJsonOrThrow(resp){
+        const ct = (resp.headers.get('content-type') || '').toLowerCase();
+        const raw = await resp.text();
+
+        let data = null;
+        if (ct.includes('application/json')) {
+          try { data = JSON.parse(raw); } catch (e) {}
+        }
+
+        if (!resp.ok) {
+          console.error('HTTP', resp.status, 'Content-Type:', ct, 'Body:', raw);
+          throw new Error(
+            (data && (data.erro || data.message)) ||
+            `Falha HTTP ${resp.status}. O servidor retornou HTML em vez de JSON.`
+          );
+        }
+
+        if (!data || data.ok !== true) {
+          console.error('Resposta não-JSON ou inválida:', { ct, raw });
+          throw new Error((data && data.erro) || 'Resposta inválida do servidor.');
+        }
+
+        return data;
+      }
+
+      async function carregarHistorico(){
+        const conversaId = getConversaId();
+        if(!conversaId) return;
+
+        try{
+          const url = API_HIST + '?conversa_id=' + encodeURIComponent(conversaId);
+          const resp = await fetch(url, { method: 'GET' });
+          const data = await parseJsonOrThrow(resp);
+
+          chatBody.innerHTML = '';
+          for(const m of (data.mensagens || [])){
+            const anexos = (m.anexos || []).map(a => ({
+              tipo: a.tipo,
+              url: a.url_arquivo
+            }));
+            pushBubble(m.autor === 'usuario' ? 'user' : 'bot', m.conteudo_texto || '', anexos);
+          }
+
+          if(!data.mensagens || data.mensagens.length === 0){
+            boot();
+          }else{
+            if (txt) txt.focus();
+          }
+
+          setStatus('Histórico carregado.', 'ok');
+        }catch(err){
+          console.error(err);
+          setStatus('Não foi possível carregar o histórico.', 'warn');
+          chatBody.innerHTML = '';
+          boot();
+        }
+      }
+
+      files.addEventListener('change', () => {
+        const n = files.files ? files.files.length : 0;
+        setFilesInfoText(
+          n ? (n === 1 ? '1 arquivo selecionado' : (n + ' arquivos selecionados')) : 'Nenhum arquivo selecionado'
+        );
+        if (attachBtn) attachBtn.classList.toggle('has-files', n > 0);
+      });
+
+      async function enviar(){
+        const texto = (txt.value || '').trim();
+        const hasFiles = files.files && files.files.length > 0;
+
+        if(!texto && !hasFiles){
+          setStatus('Envie um texto ou selecione um arquivo.', 'warn');
+          return;
+        }
+
+        pushBubble('user', texto || '[anexo enviado]');
+        setStatus('Enviando...', null);
+        btnSend.disabled = true;
+
+        try{
+          const fd = new FormData();
+          fd.append('texto', texto);
+
+          const conversaId = getConversaId();
+          if(conversaId) fd.append('conversa_id', conversaId);
+
+          if(hasFiles){
+            for(const f of files.files){
+              fd.append('arquivos[]', f);
+            }
+          }
+
+          const resp = await fetch(API_ENVIAR, { method: 'POST', body: fd });
+          const data = await parseJsonOrThrow(resp);
+
+          if(data.conversa_id) setConversaId(data.conversa_id);
+
+          const anexos = (data.anexos || []).map(a => ({ tipo: a.tipo, url: a.url }));
+          if(anexos.length){
+            pushBubble('user', 'Anexos enviados:', anexos);
+          }
+
+          pushBubble('bot', data.resposta || 'Certo.');
+          setStatus('Pronto.', 'ok');
+
+          txt.value = '';
+          files.value = '';
+          setFilesInfoText('Nenhum arquivo selecionado');
+          if (attachBtn) attachBtn.classList.remove('has-files');
+          txt.focus();
+
+        }catch(err){
+          console.error(err);
+          setStatus('Erro ao enviar: ' + (err.message || 'falha'), 'err');
+          pushBubble('bot', 'Não consegui enviar agora. Verifique a conexão e tente novamente.');
+        }finally{
+          btnSend.disabled = false;
+        }
+      }
+
+      btnSend.addEventListener('click', enviar);
+
+      txt.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' && !e.shiftKey){
+          e.preventDefault();
+          enviar();
+        }
+      });
+
+      btnClear.addEventListener('click', () => {
+        chatBody.innerHTML = '';
+        setStatus('Tela limpa.', 'ok');
+        boot();
+      });
+
+      btnNew.addEventListener('click', () => {
+        clearConversaId();
+        chatBody.innerHTML = '';
+        setStatus('Nova conversa iniciada.', 'ok');
+        boot();
+      });
+
+      carregarHistorico();
+      if(!getConversaId()){
+        boot();
+      }
+    })();
+  </script>
+</body>
+</html>

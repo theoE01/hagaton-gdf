@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel Admin | Participa DF</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    :root{
+      --gdf-blue:#003A8F;
+      --gdf-green:#0B7D3E;
+
+      --bg:#f2f4f8;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#4b5563;
+      --line:rgba(31,41,55,.12);
+      --shadow:0 10px 30px rgba(0,0,0,.10);
+
+      --radius:12px;
+      --ok-bg:rgba(11,125,62,.10);
+      --ok-line:rgba(11,125,62,.28);
+    }
+
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header{
+      background: linear-gradient(90deg, var(--gdf-blue), var(--gdf-green));
+      color:#fff;
+      padding: 20px 18px;
+    }
+
+    .topbar{
+      max-width: 1100px;
+      margin: 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .topbar h1{
+      font-size: 18px;
+      margin:0;
+      letter-spacing:.2px;
+    }
+    .topbar p{
+      margin: 6px 0 0;
+      font-size: 13px;
+      opacity:.95;
+    }
+
+    .top-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      text-decoration:none;
+      font-weight: 800;
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,.25);
+      color:#fff;
+      background: rgba(255,255,255,.12);
+      transition: opacity .15s, transform .05s;
+    }
+    .btn:hover{opacity:.95}
+    .btn:active{transform: translateY(1px)}
+    .btn:focus{outline:none; box-shadow: 0 0 0 4px rgba(255,255,255,.18);}
+
+    main{
+      max-width: 1100px;
+      margin: 26px auto;
+      padding: 0 16px 26px;
+    }
+
+    .card{
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .card-head{
+      padding: 16px 16px 14px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .card-head h2{
+      font-size: 16px;
+      margin:0;
+      color: var(--gdf-blue);
+    }
+    .card-head .sub{
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .search{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+
+    .search input{
+      width: 320px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      outline: none;
+      background: #f9fafb;
+      color: var(--text);
+      transition: box-shadow .15s, border-color .15s;
+    }
+    .search input:focus{
+      border-color: rgba(11,125,62,.45);
+      box-shadow: 0 0 0 4px rgba(11,125,62,.12);
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #f9fafb;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+    }
+    th, td{
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    th{
+      background: #f9fafb;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--ok-line);
+      background: var(--ok-bg);
+      color: var(--gdf-green);
+      font-weight: 900;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .link{
+      color: var(--gdf-blue);
+      text-decoration:none;
+      font-weight: 900;
+    }
+    .link:hover{text-decoration: underline;}
+
+    .muted{ color: var(--muted); }
+    .nowrap{ white-space: nowrap; }
+
+    .empty{
+      padding: 18px 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    footer{
+      max-width: 1100px;
+      margin: 0 auto 20px;
+      padding: 0 16px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div>
+      <h1>Painel do Administrador • Participa DF (MVP)</h1>
+      <p>Consulta de protocolos recentes, modo (anônimo/identificado) e acesso ao detalhamento auditável.</p>
+    </div>
+
+    <div class="top-actions">
+      <a class="btn" href="{{ url_for('public.home') }}">Abrir página pública</a>
+      
+        <a class="btn" href="{{ url_for('admin.capivarinha_analises') }}">
+          ANÁLISES DA CAPIVARINHA
+        </a>
+      
+      <a class="btn" href="{{ url_for('admin.logout') }}">Sair</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="card" aria-label="Lista de protocolos">
+    <div class="card-head">
+      <div>
+        <h2>Protocolos recentes</h2>
+        <div class="sub">Clique em um protocolo para ver submissões e anexos (com hash SHA-256, tamanho e data/hora).</div>
+      </div>
+
+      <div class="search">
+        <div class="pill">Total exibido: <strong>{{ users|length }}</strong></div>
+        <input id="q" type="text" placeholder="Filtrar por protocolo, nome, e-mail..." aria-label="Filtro" />
+      </div>
+    </div>
+
+    {% if users and users|length > 0 %}
+      <div style="overflow:auto;">
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th>Protocolo</th>
+              <th>Envio</th>
+              <th>Identificação</th>
+              <th>Criado</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+              <tr>
+                <td class="nowrap">
+                  <a class="link" href="{{ url_for('admin.view_protocolo', protocolo=u.protocolo) }}">
+                    {{ u.protocolo }}
+                  </a>
+                </td>
+
+                <td>
+                  {% if u.is_public %}
+                    <span class="tag">Identificado</span>
+                  {% else %}
+                    <span class="tag" style="border-color: rgba(0,58,143,.25); background: rgba(0,58,143,.08); color: var(--gdf-blue);">Anônimo</span>
+                  {% endif %}
+                </td>
+
+                <td>
+                  {% if u.is_public %}
+                    <div><strong>{{ u.nome or '—' }}</strong></div>
+                    <div class="muted">{{ u.email or '—' }}</div>
+                    <div class="muted">{{ u.telefone or '—' }}</div>
+                  {% else %}
+                    <span class="muted">Não informado</span>
+                  {% endif %}
+                </td>
+
+                <td class="muted nowrap">
+                  {{ u.created_at or '—' }}
+                </td>
+
+                <td class="nowrap">
+                  <a class="link" href="{{ url_for('admin.view_protocolo', protocolo=u.protocolo) }}">Ver detalhes</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty">Nenhum protocolo encontrado no momento.</div>
+    {% endif %}
+  </section>
+</main>
+
+<footer>
+  Auditoria: este painel deve ser acessado apenas por usuários autorizados. Ele é constantemente analisado por IA Capivarinha.
+</footer>
+
+<script>
+  (function(){
+    const q = document.getElementById('q');
+    const tbl = document.getElementById('tbl');
+    if(!q || !tbl) return;
+
+    q.addEventListener('input', function(){
+      const v = (q.value || '').toLowerCase().trim();
+      const rows = tbl.querySelectorAll('tbody tr');
+      rows.forEach(tr => {
+        const text = tr.innerText.toLowerCase();
+        tr.style.display = text.includes(v) ? '' : 'none';
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

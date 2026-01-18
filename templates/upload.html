@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Enviar Arquivos - Participa DF (MVP)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <meta name="theme-color" content="#003A8F">
+
+  <style>
+    /* RESET */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root{
+  /* Paleta GDF (mesma linha do index.html) */
+  --gdf-blue: #003A8F;
+  --gdf-green: #0B7D3E;
+  --gdf-gold: #F4C300;
+
+  --bg: #f2f4f8;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #374151;
+
+  --line: #cbd5e1;
+  --shadow: 0 4px 16px rgba(0,0,0,0.10);
+
+  --radius: 8px;
+  --radius2: 6px;
+}
+
+/* BODY / LAYOUT */
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 28px 14px;
+}
+
+/* GRID PRINCIPAL (2 colunas, como antes) */
+.shell{
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 20px;
+}
+
+@media (max-width: 920px){
+  .shell{ grid-template-columns: 1fr; }
+}
+
+/* CARD BASE (visual do index: branco, sombra leve) */
+.card{
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* HEADER DO CARD (faixa superior com gradiente GDF) */
+.header{
+  background: linear-gradient(90deg, var(--gdf-blue), var(--gdf-green));
+  color: #fff;
+  padding: 18px 18px 14px;
+  display:flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.brand{
+  display:flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* LOGO “DF” (mantendo forma do index: simples e limpa) */
+.logo{
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.16);
+  border: 1px solid rgba(255,255,255,0.30);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 800;
+  letter-spacing: .4px;
+}
+
+.title h1{
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.title p{
+  margin: 6px 0 0;
+  font-size: 13px;
+  opacity: 0.95;
+  line-height: 1.35;
+}
+
+/* PILL DO PROTOCOLO */
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* CONTEÚDO */
+.content{ padding: 18px; }
+
+/* GRID DE CAMPOS */
+.grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+@media (max-width: 560px){
+  .grid{ grid-template-columns: 1fr; }
+}
+
+/* LABELS */
+label{
+  display:block;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+/* INPUTS */
+input[type="text"], select, textarea{
+  width: 100%;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius2);
+  padding: 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+textarea{ min-height: 120px; resize: vertical; }
+
+input:focus, select:focus, textarea:focus{
+  border-color: var(--gdf-green);
+  box-shadow: 0 0 0 4px rgba(11,125,62,0.12);
+}
+
+/* TEXTOS DE AJUDA */
+.help{
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.small{
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* FILEBOX (com “caixa” leve) */
+.filebox{
+  border: 1px dashed rgba(0,0,0,0.18);
+  background: #f9fafb;
+  border-radius: var(--radius);
+  padding: 14px;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filetop{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: #fff;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.count{
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+input[type="file"]{
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--radius2);
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--muted);
+}
+
+/* AÇÕES / BOTÕES (mesma linguagem do index: verde/azul) */
+.actions{
+  margin-top: 16px;
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn{
+  appearance: none;
+  border: none;
+  background-color: var(--gdf-green);
+  color: #fff;
+  padding: 14px;
+  border-radius: var(--radius2);
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+  transition: background-color .15s, transform .05s, box-shadow .15s;
+  box-shadow: 0 4px 14px rgba(11,125,62,0.18);
+}
+
+.btn:hover{ background-color: #096735; }
+.btn:active{ transform: translateY(1px); }
+.btn:focus{ outline: none; box-shadow: 0 0 0 4px rgba(0,58,143,0.14); }
+
+/* Variações */
+.btn-primary{
+  background-color: var(--gdf-green);
+}
+.btn-primary:hover{
+  background-color: #096735;
+}
+
+.btn-danger{
+  background-color: var(--gdf-blue);
+  box-shadow: 0 4px 14px rgba(0,58,143,0.18);
+}
+.btn-danger:hover{
+  background-color: #022f73;
+}
+
+/* ALERTAS (flash) */
+.alert{
+  border-radius: var(--radius);
+  padding: 12px 12px;
+  margin: 0 0 12px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: #fff;
+  color: var(--text);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.alert.success{
+  border-left: 6px solid var(--gdf-green);
+  background: rgba(11,125,62,0.07);
+}
+
+.alert.error{
+  border-left: 6px solid #dc2626;
+  background: rgba(220,38,38,0.07);
+}
+
+/* ASIDE (guia) */
+.aside .content{
+  padding: 16px 16px 18px;
+}
+
+.aside h2{
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--gdf-blue);
+}
+
+.aside p, .aside li{
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.aside ul{
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+/* FOOTER NOTE (rodapé do card principal) */
+.footer-note{
+  border-top: 1px solid rgba(0,0,0,0.08);
+  padding: 12px 18px;
+  color: var(--muted);
+  font-size: 12px;
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: #fff;
+}
+
+/* ACESSIBILIDADE */
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  border:0;
+  white-space:nowrap;
+}
+
+.link{
+  color: var(--gdf-blue);
+  text-decoration: none;
+  font-weight: 800;
+}
+.link:hover{ text-decoration: underline; }
+
+  </style>
+</head>
+
+<body>
+  <main class="shell" aria-label="Página de envio de anexos ao protocolo">
+
+    <!-- CARD PRINCIPAL -->
+    <section class="card" aria-label="Formulário de envio">
+      <div class="header">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">GDF</div>
+          <div class="title">
+            <h1>Envio de Arquivos e Manifestação</h1>
+          </div>
+        </div>
+
+        <div class="pill" title="Protocolo atual">
+          <span aria-hidden="true">Protocolo:</span>
+          <strong id="pillProtocolo">{{ protocolo }}</strong>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- FLASH MESSAGES (Flask) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div aria-live="polite" aria-atomic="true">
+              {% for category, message in messages %}
+                <div class="alert {{ 'error' if category=='error' else 'success' }}">
+                  <strong>{{ 'Atenção' if category=='error' else 'Sucesso' }}:</strong>
+                  <span> {{ message }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form id="uploadForm"
+              action="{{ url_for('upload.upload_submit') }}"
+              method="POST"
+              enctype="multipart/form-data"
+              novalidate>
+
+          <div class="grid">
+            <div>
+              <label for="protocolo">Protocolo</label>
+              <input id="protocolo"
+                     name="protocolo"
+                     type="text"
+                     value="{{ protocolo }}"
+                     readonly
+                     aria-readonly="true" />
+              <div class="help">Protocolo automático do sistema.</div>
+            </div>
+
+            <div>
+              <label for="tipo">Tipo de registro</label>
+              <select id="tipo" name="tipo" required aria-describedby="tipoHelp">
+                <option value="texto">Texto</option>
+                <option value="imagem">Imagem</option>
+                <option value="audio">Áudio</option>
+                <option value="video">Vídeo</option>
+              </select>
+              <div class="help" id="tipoHelp">
+                Selecione o tipo do registro.
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <label for="texto">Descrição (opcional, mas recomendado)</label>
+            <textarea id="texto"
+                      name="texto"
+                      placeholder="Descreva o que aconteceu."
+                      aria-describedby="textoHelp"></textarea>
+            <div class="help" id="textoHelp">
+              Quanto mais claro e detalhado o relato, melhor a triagem.
+            </div>
+          </div>
+
+          <div style="margin-top: 14px;" class="filebox" aria-label="Envio de arquivos">
+            <div class="filetop">
+              <div class="badge" id="fileBadge">
+                Formatos aceitos: <span id="fmt">nenhum</span>
+              </div>
+              <div class="count" id="fileCount">Nenhum arquivo selecionado</div>
+            </div>
+
+            <label class="sr-only" for="files">Selecionar arquivos</label>
+            <input id="files"
+                   name="files"
+                   type="file"
+                   multiple
+                   aria-describedby="filesHelp" />
+
+            <div class="help" id="filesHelp">
+              Você pode selecionar múltiplos arquivos.
+            </div>
+
+            <div class="small" id="limitHint"></div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="submit" id="btnSubmit">
+              Enviar e registrar no protocolo
+            </button>
+
+            <a class="btn" href="{{ url_for('public.protocolo_page', protocolo=protocolo) }}">
+              Voltar ao protocolo
+            </a>
+
+            <a class="btn btn-danger" href="{{ url_for('public.home') }}">
+              Iniciar nova solicitação
+            </a>
+          </div>
+
+        </form>
+      </div>
+
+      <div class="footer-note">
+        <span>Recomendação: envie evidências com boa visibilidade e áudio claro.</span>
+        <span>Privacidade: evite expor dados pessoais desnecessários.</span>
+      </div>
+    </section>
+
+    <!-- CARD LATERAL (GUIA) -->
+    <aside class="card aside" aria-label="Guia de envio e validação">
+      <div class="header">
+        <div class="title">
+          <h1 style="margin:0;font-size:16px;">Guia rápido</h1>
+          <p style="margin:6px 0 0;">Regras de formato, tamanho e boas práticas para aumentar a qualidade do registro.</p>
+        </div>
+      </div>
+
+      <div class="content">
+        <h2>Boas práticas</h2>
+        <ul>
+          <li>Informe local aproximado, data e contexto no campo de descrição.</li>
+          <li>Evite incluir rostos e documentos pessoais quando não forem necessários.</li>
+          <li>Em vídeos, capture início e fim do problema (com referência visual do local).</li>
+          <li>Em áudios, grave em ambiente com pouco ruído e fale pausadamente.</li>
+        </ul>
+
+        <h2 style="margin-top:14px;">Validação no sistema</h2>
+        <p>
+          O sistema vincula anexos ao protocolo e registra metadados (tipo, tamanho e integridade por hash).
+          Isso ajuda na auditoria e na rastreabilidade do atendimento.
+        </p>
+
+        <p class="small" id="ruleBox" style="margin-top: 12px;">
+          Selecione um tipo no formulário para ver as regras de formatos e limite recomendado.
+        </p>
+      </div>
+    </aside>
+
+  </main>
+
+  <script>
+    (function () {
+      const tipoEl = document.getElementById('tipo');
+      const filesEl = document.getElementById('files');
+      const fmtEl = document.getElementById('fmt');
+      const fileCountEl = document.getElementById('fileCount');
+      const limitHintEl = document.getElementById('limitHint');
+      const ruleBoxEl = document.getElementById('ruleBox');
+
+      // Regras precisam refletir o backend (routes/upload.py)
+      const rules = {
+        texto:  { accept: '', formats: 'Sem anexos obrigatórios', limit: 'Sem limite (campo texto)', requiredFiles: false },
+        imagem: { accept: '.jpg,.jpeg,.png,.webp', formats: 'JPG, PNG, WEBP', limit: 'Até 10 MB por arquivo', requiredFiles: true },
+        audio:  { accept: '.mp3,.wav,.ogg,.m4a', formats: 'MP3, WAV, OGG, M4A', limit: 'Até 25 MB por arquivo', requiredFiles: true },
+        video:  { accept: '.mp4,.webm,.mov', formats: 'MP4, WEBM, MOV', limit: 'Até 200 MB por arquivo', requiredFiles: true }
+      };
+
+      function applyRule() {
+        const t = (tipoEl.value || 'texto').toLowerCase();
+        const r = rules[t] || rules.texto;
+
+        filesEl.accept = r.accept;
+        fmtEl.textContent = r.formats;
+        limitHintEl.textContent = (t === 'texto')
+          ? 'Para registro em texto, você pode enviar sem anexos.'
+          : `Limite recomendado: ${r.limit}.`;
+
+        ruleBoxEl.textContent = (t === 'texto')
+          ? 'Tipo TEXTO: descreva a solicitação e envie sem anexos, se preferir.'
+          : `Tipo ${t.toUpperCase()}: anexe evidências no formato (${r.formats}) e respeite ${r.limit}.`;
+
+        // Quando for texto, não obrigar arquivo no front
+        if (t === 'texto') {
+          filesEl.required = false;
+        } else {
+          filesEl.required = true;
+        }
+
+        updateCount();
+      }
+
+      function updateCount() {
+        const count = filesEl.files ? filesEl.files.length : 0;
+        if (!count) {
+          fileCountEl.textContent = 'Nenhum arquivo selecionado';
+          return;
+        }
+        fileCountEl.textContent = count === 1
+          ? '1 arquivo selecionado'
+          : `${count} arquivos selecionados`;
+      }
+
+      tipoEl.addEventListener('change', applyRule);
+      filesEl.addEventListener('change', updateCount);
+
+      // Inicializa
+      applyRule();
+    })();
+  </script>
+      
+  <script>
+    // ligar o head do manifest
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("{{ url_for('static', filename='sw.js') }}")
+        .catch(err => console.log("SW erro:", err));
+    });
+  }
+</script>
+
+</body>
+</html>

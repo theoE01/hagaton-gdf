@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Protocolo Gerado | GDF</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root{
+      --gdf-blue: #003A8F;
+      --gdf-green: #0B7D3E;
+
+      --bg: #f2f4f8;
+      --text: #1f2937;
+      --muted: #374151;
+      --card: #ffffff;
+
+      --line: rgba(31,41,55,.12);
+      --shadow: 0 10px 30px rgba(0,0,0,0.10);
+
+      --ok-bg: rgba(11,125,62,.10);
+      --ok-line: rgba(11,125,62,.35);
+
+      --err-bg: rgba(220,38,38,.10);
+      --err-line: rgba(220,38,38,.30);
+
+      --radius: 12px;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--gdf-blue), var(--gdf-green));
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    header h1 { font-size: 26px; }
+    header p { margin-top: 8px; font-size: 14px; opacity: 0.95; }
+
+    .container {
+      max-width: 920px;
+      margin: 46px auto;
+      padding: 0 16px;
+    }
+
+    .protocol-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 34px 26px;
+      box-shadow: var(--shadow);
+      border-top: 6px solid var(--gdf-green);
+      text-align: center;
+      border-left: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .protocol-card h2 {
+      color: var(--gdf-blue);
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    .protocol-card p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    .meta {
+      display: inline-flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 10px 0 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #f9fafb;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pill strong{
+      color: var(--text);
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .protocol-number {
+      background: #f9fafb;
+      border: 2px dashed var(--gdf-green);
+      padding: 18px 14px;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--gdf-green);
+      letter-spacing: 1.5px;
+      border-radius: 10px;
+      margin: 14px auto 18px;
+      max-width: 520px;
+      word-break: break-word;
+    }
+
+    .alerts{
+      max-width: 720px;
+      margin: 0 auto 14px;
+      text-align: left;
+    }
+
+    .alert{
+      border-radius: 10px;
+      padding: 12px 12px;
+      margin: 0 0 10px;
+      border: 1px solid var(--line);
+      background: #f9fafb;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+    .alert.success{
+      border-color: var(--ok-line);
+      background: var(--ok-bg);
+    }
+    .alert.error{
+      border-color: var(--err-line);
+      background: var(--err-bg);
+    }
+
+    .actions {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn {
+      text-decoration: none;
+      background-color: var(--gdf-green);
+      color: white;
+      padding: 14px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      border: 1px solid rgba(255,255,255,.0);
+      cursor: pointer;
+      text-align: center;
+      transition: transform .05s, opacity .15s, box-shadow .15s;
+      box-shadow: 0 8px 20px rgba(11,125,62,.18);
+    }
+
+    .btn.secondary {
+      background-color: var(--gdf-blue);
+      box-shadow: 0 8px 20px rgba(0,58,143,.18);
+    }
+
+    .btn:active { transform: translateY(1px); }
+    .btn:hover { opacity: 0.95; }
+
+    .btn:focus{
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(0,58,143,.22);
+    }
+
+    .note{
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    footer {
+      margin-top: 56px;
+      background-color: var(--gdf-blue);
+      text-align: center;
+      padding: 18px;
+      color: white;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Governo do Distrito Federal</h1>
+  <p>Protocolo gerado com sucesso</p>
+</header>
+
+<div class="container">
+  <div class="protocol-card">
+    <h2>Protocolo de Atendimento</h2>
+    <p>Guarde este número para acompanhar ou complementar sua manifestação.</p>
+
+    <!-- META (Identificado/Anônimo) -->
+    <div class="meta" aria-label="Informações do registro">
+      <div class="pill" title="Situação do envio">
+        Status: <strong>Recebido</strong>
+      </div>
+
+      <div class="pill" title="Modo do registro">
+        Envio: <strong>{{ 'Identificado' if is_public else 'Anônimo' }}</strong>
+      </div>
+    </div>
+
+    <!-- FLASH MESSAGES (Flask) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alerts" aria-live="polite" aria-atomic="true">
+          {% for category, message in messages %}
+            <div class="alert {{ 'error' if category=='error' else 'success' }}">
+              <strong>{{ 'Atenção' if category=='error' else 'Sucesso' }}:</strong>
+              <span> {{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- PROTOCOLO DINÂMICO -->
+    <div class="protocol-number" aria-label="Número do protocolo">
+      {{ protocolo }}
+    </div>
+
+    <!-- AÇÕES (CORRETAS) -->
+    <div class="actions">
+      <a class="btn" href="{{ url_for('upload.upload_page', protocolo=protocolo) }}">
+        Anexar arquivos ao protocolo
+      </a>
+
+      <a class="btn secondary" href="{{ url_for('public.home') }}">
+        Voltar à página inicial
+      </a>
+    </div>
+
+    <div class="note">
+      Recomendação: evite incluir dados pessoais desnecessários em imagens, áudios ou vídeos. Caso precise complementar
+      sua solicitação, utilize o botão de anexar arquivos e descreva o contexto no campo de texto.
+    </div>
+  </div>
+</div>
+
+<footer>
+  © Governo do Distrito Federal – Todos os direitos reservados
+</footer>
+
+</body>
+</html>
